@@ -34,7 +34,9 @@ print("Exact duplicate rows:", f"{df.duplicated().sum():,}")
 # Check likely listing identifiers, if present.
 for col in ["id", "url", "VIN"]:
     if col in df.columns:
+        #supprimer tous les lignes qui ont des valeurs manquantes dans cette colonne avant de vérifier les doublons
         nonempty = df[col].dropna()
+        #vérifier les doublons dans la colonne non vide au niveau de col
         print(f"Duplicate non-null {col} values:", f"{nonempty.duplicated().sum():,}")
 
 print("\n" + "=" * 70)
@@ -43,13 +45,15 @@ print("=" * 70)
 numeric = df.select_dtypes(include=np.number)
 if not numeric.empty:
     print(numeric.describe(percentiles=[.01, .25, .5, .75, .95, .99]).T.to_string())
-
-print("\n" + "=" * 70)
-print("6. UNIQUE VALUES IN CATEGORICAL COLUMNS")
-print("=" * 70)
-for col in df.select_dtypes(include=["object", "category"]).columns:
-    print(f"\n{col}: {df[col].nunique(dropna=True):,} unique non-missing values")
-    print(df[col].value_counts(dropna=False).head(8).to_string())
+#ce code génére beaucoup des lignes il y'a ceu qui se sont non valides et écoule beaucoup d'espace et prend l'éspace de les résultat qui lui sont au dessus, donc je vais le commenter pour ne pas l'afficher
+#print("\n" + "=" * 70)
+#print("6. UNIQUE VALUES IN KEY CATEGORICAL COLUMNS")
+#print("=" * 70)
+# Ne cibler que les colonnes les plus importantes
+#for col in df.select_dtypes(include=["object", "category"]).columns:
+#    if col in df.columns:
+#        print(f"\n{col} ({df[col].nunique(dropna=True):,} valeurs uniques) :")
+#        print(df[col].value_counts(dropna=False).head(5).to_string())
 
 print("\n" + "=" * 70)
 print("7. POTENTIALLY INVALID VALUES")
@@ -125,3 +129,5 @@ print(df[cols].sample(min(10, len(df)), random_state=42).to_string(index=False))
 print("\n" + "=" * 70)
 print("AUDIT FINISHED — no data was changed.")
 print("=" * 70)
+
+
